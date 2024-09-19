@@ -1,63 +1,59 @@
 import { useRef } from "react";
-import { useState } from "react";
-
+import { useInput } from '../hooks/userInput.js'
+import Input from "./Input.jsx"
+import { isEmail, isNotEmpty, hasMinLength } from '../util/validation.js'
 export default function Login() {
+  const { value: emailValue, handleInputChange: handleEmailChange, handleInputBlur: handleEmailBlur, hasError: emailHasError } = useInput('', (value) => isEmail(value) && isNotEmpty(value))
+  const { value: passwordVale, handleInputChange: handlePasswordChange, handleInputBlur: handlePasswordBlur, hasError: passwordHasError } = useInput('', (value) => hasMinLength(value, 6))
 
-  const [emailisInvalid, setEmialIsInvalid] = useState()
+  // const [emailisInvalid, setEmialIsInvalid] = useState()
 
   const email = useRef()
   const password = useRef()
 
 
-  const [enterValues, setEnterValues] = useState({
-    email: '',
-    password: ''
-  })
+  // const [enterValues, setEnterValues] = useState({
+  //   email: '',
+  //   password: ''
+  // })
 
-  const [didEdit, setDidEdit] = useState({
-    email: false,
-    password: false
-  })
+  // const [didEdit, setDidEdit] = useState({
+  //   email: false,
+  //   password: false
+  // })
 
-  function handleInputBlur(identifier) {
-    setDidEdit(prevEdit => ({
-      ...prevEdit,
-      [identifier]: true
-    }))
-  }
-
-  const emailIsInvalid = didEdit.email && !enterValues.email.includes('@')
+  // function handleInputBlur(identifier) {
+  //   setDidEdit(prevEdit => ({
+  //     ...prevEdit,
+  //     [identifier]: true
+  //   }))
+  // }
 
 
-  function handleInputChange(identifier, value) {
-    setEnterValues(prev => ({
-      ...prev,
-      [identifier]: value
-    }))
+  // const passwordIsInvalid = didEdit.password && !hasMinLength(enterValues.password, 6)
 
-    setDidEdit(prevEdit => ({
-      ...prevEdit,
-      [identifier]: false
-    }))
-  }
+  // function handleInputChange(identifier, value) {
+  //   setEnterValues(prev => ({
+  //     ...prev,
+  //     [identifier]: value
+  //   }))
+
+  //   setDidEdit(prevEdit => ({
+  //     ...prevEdit,
+  //     [identifier]: false
+  //   }))
+  // }
 
 
 
 
   function handleSubmit(event) {
     event.preventDefault();
-    console.log(enterValues)
-
-    const enterdeEmail = email.current.value;
-    const enteredPasssword = password.current.value
-
-    const emailIsValid = enterdeEmail.includes('@')
-    if (!emailIsValid) {
-      setEmialIsInvalid(true)
+    if (emailHasError || passwordHasError) {
       return
     }
 
-    console.log('sending http ')
+    console.log(emailValue.passwordVale)
   }
 
 
@@ -66,23 +62,21 @@ export default function Login() {
       <h2>Login</h2>
 
       <div className="control-row">
-        <div className="control no-margin">
-          <label htmlFor="email">Email</label>
-          <input
-            id="email"
-            type="email"
-            name="email"
-            onBlur={() => handleInputBlur('email')}
-            onChange={(event) => handleInputChange('email', event.target.value)}
-            value={enterValues.email}
-          />
-          <div className="control-error">{emailIsInvalid && <p>Please enter valid email</p>}</div>
-        </div>
-
-        <div className="control no-margin">
-          <label htmlFor="password">Password</label>
-          <input id="password" type="password" name="password" value={enterValues.password} onChange={(event) => handleInputChange('password', event.target.value)} />
-        </div>
+        {/* <Input label="Email" id="email" name="email" /> */}
+        <Input label="email" id="email" type="email" name="email"
+          onBlur={handleEmailBlur}
+          onChange={handleEmailChange}
+          value={emailValue}
+          error={emailHasError && 'Please enter a balid email!'}
+        >
+        </Input>
+        <Input label="passwoerd" id="password" type="password" name="password"
+          onBlur={handlePasswordBlur}
+          onChange={handlePasswordChange}
+          value={passwordVale}
+          error={passwordHasError && 'Pleases enter a valid password!'}
+        >
+        </Input>
       </div>
 
       <p className="form-actions">
